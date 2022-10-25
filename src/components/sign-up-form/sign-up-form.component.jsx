@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from "../../utils/firebase/firebase.utils";
 
 // Trabalhando com "listeners" de inputs simuntânemanete.
 // 1. Agrupar todos os campos em um objeto cujo a KEY será o NAME do campo
@@ -26,6 +27,40 @@ const SignUpForm = () => {
     //Desestruturando as KEYS para conseguir acessar individualmente
     const { displayName, email, password, confirmPassword } =  formFields;
 
+    const resetFormFields = () => {
+
+        setFormFields(defaultFormFields)
+    }
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if(password !== confirmPassword) {
+
+            alert('Password do not match')
+            return;
+        }
+
+        try {
+            const { user } = await createAuthUserWithEmailAndPassword(
+                email, 
+                password
+            );
+            await createUserDocumentFromAuth(user, {displayName})
+            alert('User created successfully')
+            resetFormFields()
+
+            
+        
+        } catch(error) {
+            if(error.code === 'auth/email-already-in-use') {
+                alert('Cannot creation user, email already in use')
+            } else {
+                console.log('User creation encountered an error',error)
+            }
+        }
+
+
+    }
 
     const handleChange = (event) => {
         //permite acessar todos atributos/props do event
@@ -39,7 +74,7 @@ const SignUpForm = () => {
     return(
         <div>
             <h1>Sign up with your email and password</h1>
-            <form onSubmit={()=>{}}>
+            <form onSubmit={handleSubmit}>
                 <label>Display Name</label>
                 <input type='string' required onChange={handleChange} name='displayName' value={displayName}></input>
                 
