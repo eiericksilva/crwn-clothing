@@ -1,3 +1,7 @@
+/*  Trata das formas de entrar no Site.
+    Utilizando Email e senha
+    ou Autenticação do Google
+*/
 
 import { useState } from "react";
 
@@ -82,8 +86,8 @@ const SignInForm = () => {
         <div className='sign-up-container'>
             <h2>Already have an account?</h2>
             <span>Sign in with your email and password</span>
+            
             <form onSubmit={handleSubmit}>
-               
                 <FormInput 
                     label='Email'
                     type='email' 
