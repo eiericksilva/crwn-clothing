@@ -11,6 +11,9 @@ import {
 
 import '../sign-up-form/sign-up-form.styles.scss'
 
+import { UserContext } from "../../contexts/user.context";
+import { useContext } from "react";
+
 // Trabalhando com "listeners" de inputs simuntânemanete.
 // 1. Agrupar todos os campos em um objeto cujo a KEY será o NAME do campo
 // e iniciará com value VAZIO
@@ -36,6 +39,11 @@ const SignUpForm = () => {
     //Desestruturando as KEYS para conseguir acessar individualmente
     const { displayName, email, password, confirmPassword } =  formFields;
 
+    const { setCurrentUser } = useContext(UserContext)
+
+
+    console.log('🔥 Hit')
+    
     const resetFormFields = () => {
         setFormFields(defaultFormFields)
     }
@@ -53,6 +61,8 @@ const SignUpForm = () => {
                 email, 
                 password
             );
+
+            setCurrentUser(user);
 
             await createUserDocumentFromAuth(user, { displayName })
             resetFormFields()
