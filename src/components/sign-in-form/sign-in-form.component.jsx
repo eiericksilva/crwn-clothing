@@ -22,6 +22,7 @@ import '../sign-in-form/sign-in-form.styles.scss'
 // 1. Agrupar todos os campos em um objeto cujo a KEY será o NAME do campo
 // e iniciará com value VAZIO
 
+//Será o state inicial
 const defaultFormFields = {
     email:'',
     password:'',
@@ -80,7 +81,7 @@ const SignInForm = () => {
         //permite acessar todos atributos/props do event
         const { name, value } = event.target;
 
-        //despejou todas as KEYS para atribuir ao name o value do input
+        //despejou todas as KEYS para atribuir ao [name], que é dinâmico, o value do input
         setFormFields({...formFields, [name]:value })
     }
   
