@@ -7,13 +7,13 @@ import { ShoppingIcon, ItenCount, CartIconContainer } from "./cart-icon.styles";
 import React from "react";
 
 const CartIcon = () => {
-  const { isCartOpen, setIsCartOpen, cartItemCount } = useContext(CartContext);
+  const { isCartOpen, setIsCartOpen, cartCount } = useContext(CartContext);
   const toggleIsCartOpen = () => setIsCartOpen(!isCartOpen);
 
   return (
     <CartIconContainer onClick={toggleIsCartOpen}>
       <ShoppingIcon className="shopping-icon" />
-      <ItenCount>{cartItemCount}</ItenCount>
+      <ItenCount>{cartCount}</ItenCount>
     </CartIconContainer>
   );
 };
