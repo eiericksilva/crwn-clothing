@@ -1,131 +1,105 @@
-
 import { useState } from "react";
 
-import FormInput from '../form-input/form-input.component'
-import Button from '../button/button.component'
+import FormInput from "../form-input/form-input.component";
+import Button from "../button/button.component";
 
-import { 
-    createAuthUserWithEmailAndPassword, 
-    createUserDocumentFromAuth 
+import {
+  createAuthUserWithEmailAndPassword,
+  createUserDocumentFromAuth,
 } from "../../utils/firebase/firebase.utils";
 
-import '../sign-up-form/sign-up-form.styles.scss'
-
-
-// Trabalhando com "listeners" de inputs simuntânemanete.
-// 1. Agrupar todos os campos em um objeto cujo a KEY será o NAME do campo
-// e iniciará com value VAZIO
+import { SignUpContainer } from "./sign-up-form.styles";
 
 const defaultFormFields = {
-    displayName: '',
-    email:'',
-    password:'',
-    confirmPassword:''
-}
+  displayName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const SignUpForm = () => {
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { displayName, email, password, confirmPassword } = formFields;
 
-    // 2. O Objeto criado será passado como valor de inicialização do State
-    // (por isso o value deve ser vazio) 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
 
-    //2.1 formFields contem a referência das variáveis
-    //e setFormFields será usado para alterar 
-    //o value do objeto principal (defaultFormFields)
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const [ formFields, setFormFields ] = useState(defaultFormFields)
-
-    //Desestruturando as KEYS para conseguir acessar individualmente
-    const { displayName, email, password, confirmPassword } =  formFields;
-
-    console.log('🔥 Hit')
-    
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields)
+    if (password !== confirmPassword) {
+      alert("passwords do not match");
+      return;
     }
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    try {
+      const { user } = await createAuthUserWithEmailAndPassword(
+        email,
+        password
+      );
 
-        if(password !== confirmPassword) {
-            alert('Password do not match')
-            return;
-        }
-
-        try {
-            const { user } = await createAuthUserWithEmailAndPassword(
-                email, 
-                password
-            );
-
-
-            await createUserDocumentFromAuth(user, { displayName })
-            resetFormFields()
-        
-        } catch(error) {
-            if(error.code === 'auth/email-already-in-use') {
-                alert('Cannot creation user, email already in use')
-            } else {
-                console.log('User creation encountered an error',error)
-            }
-        }
-
-
+      await createUserDocumentFromAuth(user, { displayName });
+      resetFormFields();
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        alert("Cannot create user, email already in use");
+      } else {
+        console.log("user creation encountered an error", error);
+      }
     }
+  };
 
-    const handleChange = (event) => {
-        //permite acessar todos atributos/props do event
-        const { name, value } = event.target;
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
-        //despejou todas as KEYS para atribuir ao name o value do input
-        setFormFields({...formFields, [name]:value })
-    }
-  
-    
-    return(
-        <div className='sign-up-container'>
-            <h2>Don't have an account?</h2>
-            <span>Sign up with your email and password</span>
-            <form onSubmit={handleSubmit}>
-                <FormInput 
-                    label='Display Name'
-                    type='text' 
-                    required 
-                    onChange={handleChange} 
-                    name='displayName' 
-                    value={displayName}
-                />
-                
-                <FormInput 
-                    label='Email'
-                    type='email' 
-                    required 
-                    onChange={handleChange} 
-                    name='email' 
-                    value={email}
-                />
-                
-                <FormInput 
-                    label='Password'
-                    type='password' 
-                    required 
-                    onChange={handleChange} 
-                    name='password' 
-                    value={password}
-                />
-                
-                <FormInput
-                    label='Confirm Password'
-                    type='password'
-                    required 
-                    onChange={handleChange} 
-                    name='confirmPassword' 
-                    value={confirmPassword}
-                />
+    setFormFields({ ...formFields, [name]: value });
+  };
 
-                <Button type='submit'>Sign Up</Button>
-            </form>
-        </div>
-    )
-}
+  return (
+    <SignUpContainer>
+      <h2>Don't have an account?</h2>
+      <span>Sign up with your email and password</span>
+      <form onSubmit={handleSubmit}>
+        <FormInput
+          label="Display Name"
+          type="text"
+          required
+          onChange={handleChange}
+          name="displayName"
+          value={displayName}
+        />
+
+        <FormInput
+          label="Email"
+          type="email"
+          required
+          onChange={handleChange}
+          name="email"
+          value={email}
+        />
+
+        <FormInput
+          label="Password"
+          type="password"
+          required
+          onChange={handleChange}
+          name="password"
+          value={password}
+        />
+
+        <FormInput
+          label="Confirm Password"
+          type="password"
+          required
+          onChange={handleChange}
+          name="confirmPassword"
+          value={confirmPassword}
+        />
+        <Button type="submit">Sign Up</Button>
+      </form>
+    </SignUpContainer>
+  );
+};
 
 export default SignUpForm;

@@ -1,10 +1,8 @@
-//Conexão com o Firebase
 import { initializeApp } from "firebase/app";
-//Autenticação do Firebase
 import {
   getAuth,
-  signInWithPopup,
   signInWithRedirect,
+  signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -23,12 +21,12 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA45AoVtNQPuz7Jj9WTmpo-oiwsIUO1z6o",
-  authDomain: "crwn-clothing-db-31041.firebaseapp.com",
-  projectId: "crwn-clothing-db-31041",
-  storageBucket: "crwn-clothing-db-31041.appspot.com",
-  messagingSenderId: "59612222565",
-  appId: "1:59612222565:web:ccec2643b94a587374228c",
+  apiKey: "AIzaSyDDU4V-_QV3M8GyhC9SVieRTDM4dbiT0Yk",
+  authDomain: "crwn-clothing-db-98d4d.firebaseapp.com",
+  projectId: "crwn-clothing-db-98d4d",
+  storageBucket: "crwn-clothing-db-98d4d.appspot.com",
+  messagingSenderId: "626766232035",
+  appId: "1:626766232035:web:506621582dab103a4d08d6",
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -40,19 +38,21 @@ googleProvider.setCustomParameters({
 });
 
 export const auth = getAuth();
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
+
 export const db = getFirestore();
 
-//criando uma collection
 export const addCollectionAndDocuments = async (
   collectionKey,
-  objectsToAdd
+  objectsToAdd,
+  field
 ) => {
-  //criando a referência para a collection criada
   const collectionRef = collection(db, collectionKey);
-
-  //transactions -> representa unidade de trabalho bem sucedida entre instancia no db
-  // para isso, é necessário usar o Bath
   const batch = writeBatch(db);
+
   objectsToAdd.forEach((object) => {
     const docRef = doc(collectionRef, object.title.toLowerCase());
     batch.set(docRef, object);
@@ -67,37 +67,19 @@ export const getCategoriesAndDocuments = async () => {
   const q = query(collectionRef);
 
   const querySnapshot = await getDocs(q);
-  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-    const { title, items } = docSnapshot.data();
-    acc[title.toLowerCase()] = items;
-    return acc;
-  }, {});
-
-  return categoryMap;
+  return querySnapshot.docs.map((docSnapshot) => docSnapshot.data());
 };
 
-export const signInWithGooglePopup = () =>
-  signInWithPopup(auth, googleProvider);
-export const signInWithGoogleRedirect = () =>
-  signInWithRedirect(auth, googleProvider);
-
-/* Criar documento de usuário por meio de autenticação */
 export const createUserDocumentFromAuth = async (
   userAuth,
   additionalInformation = {}
 ) => {
   if (!userAuth) return;
 
-  //Criando uma referência ao document
   const userDocRef = doc(db, "users", userAuth.uid);
-  console.log(userDocRef);
 
-  //lendo dados
   const userSnapshot = await getDoc(userDocRef);
-  console.log(userSnapshot);
-  console.log(userSnapshot.exists());
 
-  //caso a referência do Usuário não exista
   if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
     const createdAt = new Date();
@@ -110,9 +92,10 @@ export const createUserDocumentFromAuth = async (
         ...additionalInformation,
       });
     } catch (error) {
-      console.log("🔥 error creating the user", error.message);
+      console.log("error creating the user", error.message);
     }
   }
+
   return userDocRef;
 };
 
