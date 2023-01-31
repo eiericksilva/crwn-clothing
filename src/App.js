@@ -10,6 +10,7 @@ import Checkout from "./routes/checkout/checkout.component";
 import {
   createUserDocumentFromAuth,
   onAuthStateChangedListener,
+  getCurrentUser,
 } from "./utils/firebase/firebase.utils";
 
 import { setCurrentUser } from "./redux/store/user/user.action";
@@ -19,14 +20,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChangedListener((user) => {
-      if (user) {
-        createUserDocumentFromAuth(user);
-      }
-      dispatch(setCurrentUser(user));
-    });
-
-    return unsubscribe;
+    getCurrentUser().then((user) => console.log(user));
   }, [dispatch]);
 
   return (
