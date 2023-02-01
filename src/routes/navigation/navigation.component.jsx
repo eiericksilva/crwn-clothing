@@ -9,7 +9,6 @@ import { selectIsCartOpen } from "../../redux/store/cart/cart.selector";
 import { selectCurrentUser } from "../../redux/store/user/user.selector";
 
 import { ReactComponent as CrwnLogo } from "../../assets/crown.svg";
-import { signOutUser } from "../../utils/firebase/firebase.utils";
 import { SignOutStart } from "../../redux/store/user/user.action";
 
 import {
