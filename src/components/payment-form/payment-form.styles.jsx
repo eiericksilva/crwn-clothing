@@ -6,7 +6,12 @@ export const PaymentFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
+  background-color: #f2f2f2;
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid #000000;
+  cursor: pointer;
 `;
 
 export const FormContainer = styled.form`
